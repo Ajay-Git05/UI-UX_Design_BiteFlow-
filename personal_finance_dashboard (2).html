@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Personal Finance Dashboard</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --color-background-primary: #ffffff;
+    --color-background-secondary: #f5f5f3;
+    --color-background-tertiary: #eeede8;
+    --color-text-primary: #1a1a18;
+    --color-text-secondary: #6b6b67;
+    --color-border-tertiary: rgba(0,0,0,0.12);
+    --color-border-secondary: rgba(0,0,0,0.22);
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-background-primary: #1e1e1c;
+      --color-background-secondary: #2a2a28;
+      --color-background-tertiary: #232321;
+      --color-text-primary: #f0efe8;
+      --color-text-secondary: #9a9a94;
+      --color-border-tertiary: rgba(255,255,255,0.1);
+      --color-border-secondary: rgba(255,255,255,0.18);
+    }
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-background-tertiary);
+    min-height: 100vh;
+    padding: 2rem;
+    color: var(--color-text-primary);
+  }
+
+  .dash { max-width: 960px; margin: 0 auto; }
+
+  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+  .topbar h1 { font-size: 18px; font-weight: 500; }
+  .topbar span { font-size: 13px; color: var(--color-text-secondary); }
+
+  .metrics { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-bottom: 1.5rem; }
+  .metric { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 14px 16px; }
+  .metric .label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 6px; }
+  .metric .val { font-size: 22px; font-weight: 500; }
+  .metric .sub { font-size: 12px; margin-top: 4px; }
+  .positive { color: #1D9E75; }
+  .negative { color: #D85A30; }
+
+  .main { display: grid; grid-template-columns: minmax(0,1.6fr) minmax(0,1fr); gap: 16px; margin-bottom: 16px; }
+
+  .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 16px; }
+  .card:last-child { margin-bottom: 0; }
+  .card h2 { font-size: 14px; font-weight: 500; margin-bottom: 1rem; }
+
+  .month-tabs { display: flex; gap: 6px; margin-bottom: 1rem; }
+  .mtab { font-size: 12px; padding: 4px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: transparent; color: var(--color-text-secondary); cursor: pointer; font-family: var(--font-sans); }
+  .mtab.active { background: var(--color-background-secondary); color: var(--color-text-primary); font-weight: 500; }
+
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .bar-label { font-size: 12px; color: var(--color-text-secondary); width: 72px; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 8px; background: var(--color-background-secondary); border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+  .bar-amt { font-size: 12px; width: 52px; text-align: right; flex-shrink: 0; }
+
+  .donut-wrap { display: flex; align-items: center; gap: 16px; }
+  .legend { flex: 1; }
+  .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .legend-label { font-size: 12px; color: var(--color-text-secondary); }
+  .legend-pct { font-size: 12px; font-weight: 500; margin-left: auto; }
+
+  .txn-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .txn-item:last-child { border-bottom: none; }
+  .txn-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+  .txn-info { flex: 1; }
+  .txn-name { font-size: 13px; font-weight: 500; }
+  .txn-cat { font-size: 11px; color: var(--color-text-secondary); }
+  .txn-amt { font-size: 13px; font-weight: 500; }
+
+  .budget-row { margin-bottom: 14px; }
+  .budget-row:last-child { margin-bottom: 0; }
+  .budget-top { display: flex; justify-content: space-between; margin-bottom: 5px; }
+  .budget-name { font-size: 13px; }
+  .budget-nums { font-size: 12px; color: var(--color-text-secondary); }
+  .btrack { width: 100%; height: 6px; background: var(--color-background-secondary); border-radius: 3px; overflow: hidden; }
+  .bfill { height: 100%; border-radius: 3px; }
+
+  @media (max-width: 640px) {
+    body { padding: 1rem; }
+    .metrics { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .main { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="dash">
+  <div class="topbar">
+    <h1>Finance overview</h1>
+    <span>April 2026</span>
+  </div>
+
+  <div class="metrics">
+    <div class="metric"><div class="label">Total balance</div><div class="val">₹2,84,500</div><div class="sub positive">+4.2% this month</div></div>
+    <div class="metric"><div class="label">Monthly income</div><div class="val">₹85,000</div><div class="sub" style="color:var(--color-text-secondary)">Salary + freelance</div></div>
+    <div class="metric"><div class="label">Total spent</div><div class="val">₹52,340</div><div class="sub negative">↑ ₹3,200 vs last month</div></div>
+    <div class="metric"><div class="label">Savings rate</div><div class="val">38%</div><div class="sub positive">Goal: 35% — on track</div></div>
+  </div>
+
+  <div class="main">
+    <div>
+      <div class="card">
+        <h2>Spending by category</h2>
+        <div class="month-tabs">
+          <button class="mtab active" onclick="setMonth(this,'apr')">Apr</button>
+          <button class="mtab" onclick="setMonth(this,'mar')">Mar</button>
+          <button class="mtab" onclick="setMonth(this,'feb')">Feb</button>
+        </div>
+        <div id="bars"></div>
+      </div>
+      <div class="card">
+        <h2>Recent transactions</h2>
+        <div class="txn-item"><div class="txn-icon" style="background:#E1F5EE;color:#0F6E56">🛒</div><div class="txn-info"><div class="txn-name">Big Basket</div><div class="txn-cat">Groceries · Apr 6</div></div><div class="txn-amt negative">−₹2,340</div></div>
+        <div class="txn-item"><div class="txn-icon" style="background:#E6F1FB;color:#185FA5">💊</div><div class="txn-info"><div class="txn-name">Apollo Pharmacy</div><div class="txn-cat">Health · Apr 5</div></div><div class="txn-amt negative">−₹890</div></div>
+        <div class="txn-item"><div class="txn-icon" style="background:#FAECE7;color:#993C1D">🍜</div><div class="txn-info"><div class="txn-name">Swiggy</div><div class="txn-cat">Food · Apr 5</div></div><div class="txn-amt negative">−₹650</div></div>
+        <div class="txn-item"><div class="txn-icon" style="background:#EAF3DE;color:#3B6D11">💰</div><div class="txn-info"><div class="txn-name">Salary credited</div><div class="txn-cat">Income · Apr 1</div></div><div class="txn-amt positive">+₹72,000</div></div>
+        <div class="txn-item"><div class="txn-icon" style="background:#FAEEDA;color:#854F0B">🚇</div><div class="txn-info"><div class="txn-name">Metro card recharge</div><div class="txn-cat">Transport · Mar 31</div></div><div class="txn-amt negative">−₹500</div></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h2>Expense breakdown</h2>
+        <div class="donut-wrap">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="38" fill="none" stroke="var(--color-background-secondary)" stroke-width="14"/>
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#1D9E75" stroke-width="14" stroke-dasharray="71.7 167.1" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#378ADD" stroke-width="14" stroke-dasharray="47.8 167.1" stroke-dashoffset="-71.7" transform="rotate(-90 50 50)"/>
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#EF9F27" stroke-width="14" stroke-dasharray="35.8 167.1" stroke-dashoffset="-119.5" transform="rotate(-90 50 50)"/>
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#D85A30" stroke-width="14" stroke-dasharray="23.9 167.1" stroke-dashoffset="-155.3" transform="rotate(-90 50 50)"/>
+            <text x="50" y="54" text-anchor="middle" font-size="11" font-weight="500" fill="var(--color-text-primary)">₹52k</text>
+          </svg>
+          <div class="legend">
+            <div class="legend-item"><span class="dot" style="background:#1D9E75"></span><span class="legend-label">Housing</span><span class="legend-pct">43%</span></div>
+            <div class="legend-item"><span class="dot" style="background:#378ADD"></span><span class="legend-label">Food</span><span class="legend-pct">29%</span></div>
+            <div class="legend-item"><span class="dot" style="background:#EF9F27"></span><span class="legend-label">Transport</span><span class="legend-pct">21%</span></div>
+            <div class="legend-item"><span class="dot" style="background:#D85A30"></span><span class="legend-label">Health</span><span class="legend-pct">7%</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Budget tracker</h2>
+        <div class="budget-row"><div class="budget-top"><span class="budget-name">Housing</span><span class="budget-nums">₹22,500 / ₹25,000</span></div><div class="btrack"><div class="bfill" style="width:90%;background:#1D9E75"></div></div></div>
+        <div class="budget-row"><div class="budget-top"><span class="budget-name">Food & dining</span><span class="budget-nums">₹15,200 / ₹14,000</span></div><div class="btrack"><div class="bfill" style="width:100%;background:#D85A30"></div></div></div>
+        <div class="budget-row"><div class="budget-top"><span class="budget-name">Transport</span><span class="budget-nums">₹8,400 / ₹12,000</span></div><div class="btrack"><div class="bfill" style="width:70%;background:#EF9F27"></div></div></div>
+        <div class="budget-row"><div class="budget-top"><span class="budget-name">Health</span><span class="budget-nums">₹3,600 / ₹8,000</span></div><div class="btrack"><div class="bfill" style="width:45%;background:#378ADD"></div></div></div>
+        <div class="budget-row"><div class="budget-top"><span class="budget-name">Entertainment</span><span class="budget-nums">₹2,640 / ₹5,000</span></div><div class="btrack"><div class="bfill" style="width:53%;background:#7F77DD"></div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const data = {
+  apr: [
+    {cat:'Housing', amt:22500, max:25000, color:'#1D9E75'},
+    {cat:'Food',    amt:15200, max:14000, color:'#D85A30'},
+    {cat:'Transport',amt:8400, max:12000, color:'#EF9F27'},
+    {cat:'Health',  amt:3640,  max:8000,  color:'#378ADD'},
+    {cat:'Entertainment',amt:2600,max:5000,color:'#7F77DD'}
+  ],
+  mar: [
+    {cat:'Housing', amt:22500, max:25000, color:'#1D9E75'},
+    {cat:'Food',    amt:12100, max:14000, color:'#1D9E75'},
+    {cat:'Transport',amt:9200, max:12000, color:'#EF9F27'},
+    {cat:'Health',  amt:1200,  max:8000,  color:'#378ADD'},
+    {cat:'Entertainment',amt:4800,max:5000,color:'#D85A30'}
+  ],
+  feb: [
+    {cat:'Housing', amt:22500, max:25000, color:'#1D9E75'},
+    {cat:'Food',    amt:11400, max:14000, color:'#1D9E75'},
+    {cat:'Transport',amt:7800, max:12000, color:'#EF9F27'},
+    {cat:'Health',  amt:5200,  max:8000,  color:'#378ADD'},
+    {cat:'Entertainment',amt:3100,max:5000,color:'#7F77DD'}
+  ]
+};
+
+function renderBars(month) {
+  const d = data[month];
+  const maxAmt = Math.max(...d.map(x => x.max));
+  document.getElementById('bars').innerHTML = d.map(r => `
+    <div class="bar-row">
+      <span class="bar-label">${r.cat}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(r.amt/maxAmt*100)}%;background:${r.color}"></div></div>
+      <span class="bar-amt" style="color:var(--color-text-primary)">₹${(r.amt/1000).toFixed(1)}k</span>
+    </div>`).join('');
+}
+
+function setMonth(el, m) {
+  document.querySelectorAll('.mtab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderBars(m);
+}
+
+renderBars('apr');
+</script>
+</body>
+</html>
