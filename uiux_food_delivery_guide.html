@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>How to Design a Food Delivery App — UI/UX Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #0e0c0a;
+  --surface: #171410;
+  --card: #1e1a16;
+  --border: #2e2820;
+  --orange: #ff6b2b;
+  --orange-soft: #ff8c55;
+  --yellow: #f5c842;
+  --cream: #f5efe6;
+  --muted: #7a6f65;
+  --text: #e8ddd4;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Lora', serif;
+  line-height: 1.7;
+}
+
+/* HERO */
+.hero {
+  padding: 64px 24px 48px;
+  max-width: 860px; margin: 0 auto;
+  text-align: center;
+}
+.hero-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 3px;
+  color: var(--orange); text-transform: uppercase;
+  margin-bottom: 16px;
+  opacity: 0; animation: fadeUp 0.6s 0.1s forwards;
+}
+.hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(28px, 6vw, 52px);
+  font-weight: 800; line-height: 1.1;
+  color: var(--cream);
+  opacity: 0; animation: fadeUp 0.6s 0.2s forwards;
+}
+.hero h1 span { color: var(--orange); }
+.hero p {
+  margin-top: 16px; font-size: 15px; color: var(--muted);
+  max-width: 520px; margin: 16px auto 0;
+  opacity: 0; animation: fadeUp 0.6s 0.3s forwards;
+}
+
+/* PHASE NAV */
+.phase-nav {
+  display: flex; overflow-x: auto; gap: 8px;
+  padding: 24px 24px 0; max-width: 860px; margin: 0 auto;
+  scrollbar-width: none;
+}
+.phase-nav::-webkit-scrollbar { display: none; }
+.phase-pill {
+  white-space: nowrap;
+  background: var(--card); border: 1px solid var(--border);
+  color: var(--muted); font-family: 'Syne', sans-serif;
+  font-size: 12px; font-weight: 600; padding: 8px 16px;
+  border-radius: 999px; cursor: pointer; text-decoration: none;
+  transition: all 0.2s;
+}
+.phase-pill:hover, .phase-pill.active {
+  background: var(--orange); border-color: var(--orange);
+  color: #fff;
+}
+
+/* MAIN CONTENT */
+.main { max-width: 860px; margin: 0 auto; padding: 0 24px 80px; }
+
+/* PHASE BLOCK */
+.phase {
+  margin-top: 48px;
+  opacity: 0; animation: fadeUp 0.5s forwards;
+}
+.phase:nth-child(1) { animation-delay: 0.1s }
+.phase:nth-child(2) { animation-delay: 0.15s }
+.phase:nth-child(3) { animation-delay: 0.2s }
+.phase:nth-child(4) { animation-delay: 0.25s }
+.phase:nth-child(5) { animation-delay: 0.3s }
+.phase:nth-child(6) { animation-delay: 0.35s }
+
+.phase-header {
+  display: flex; align-items: center; gap: 16px; margin-bottom: 24px;
+}
+.phase-num {
+  font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
+  letter-spacing: 2px; color: var(--orange); text-transform: uppercase;
+  background: rgba(255,107,43,0.12); border: 1px solid rgba(255,107,43,0.25);
+  padding: 4px 12px; border-radius: 4px; white-space: nowrap;
+}
+.phase-title {
+  font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800;
+  color: var(--cream);
+}
+
+/* CARDS */
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 24px; margin-bottom: 16px;
+}
+.card-title {
+  font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+  color: var(--orange-soft); margin-bottom: 12px; letter-spacing: 0.5px;
+}
+.card p { font-size: 14px; color: #b0a49a; margin-bottom: 8px; }
+.card p:last-child { margin-bottom: 0; }
+
+/* STEP LIST */
+.step-list { list-style: none; }
+.step-list li {
+  display: flex; gap: 14px; padding: 14px 0;
+  border-bottom: 1px solid var(--border); font-size: 14px; color: #b0a49a;
+  align-items: flex-start;
+}
+.step-list li:last-child { border-bottom: none; padding-bottom: 0; }
+.step-num {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  color: var(--orange); background: rgba(255,107,43,0.1);
+  border: 1px solid rgba(255,107,43,0.2);
+  min-width: 28px; height: 28px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 600; flex-shrink: 0; margin-top: 2px;
+}
+.step-list strong { color: var(--cream); }
+
+/* SCREEN MOCKUP */
+.mockup-row {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px; margin-top: 16px;
+}
+.phone-mockup {
+  background: #0a0907; border: 2px solid var(--border);
+  border-radius: 24px; overflow: hidden;
+  aspect-ratio: 9/18; position: relative;
+  transition: transform 0.3s, border-color 0.3s;
+  cursor: pointer;
+}
+.phone-mockup:hover {
+  transform: translateY(-6px) scale(1.02);
+  border-color: var(--orange);
+}
+.phone-notch {
+  width: 50%; height: 10px; background: #0a0907;
+  border-radius: 0 0 12px 12px; margin: 0 auto;
+  position: relative; z-index: 2;
+}
+.screen { padding: 6px 8px; height: calc(100% - 10px); overflow: hidden; }
+.screen-label {
+  font-family: 'Syne', sans-serif; font-size: 8px; font-weight: 700;
+  color: var(--orange); letter-spacing: 1px; text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+/* SPLASH SCREEN */
+.splash-screen { background: linear-gradient(160deg, #1a0f00, #2d1500); height: 100%; border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+.splash-logo { width: 32px; height: 32px; background: var(--orange); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.splash-name { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 800; color: var(--cream); }
+.splash-tagline { font-size: 7px; color: var(--muted); }
+
+/* HOME SCREEN */
+.home-screen { background: #0f0d0b; height: 100%; border-radius: 18px; padding: 8px 6px; }
+.hs-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.hs-loc { font-size: 7px; color: var(--orange); font-family: 'Syne', sans-serif; font-weight: 700; }
+.hs-avatar { width: 14px; height: 14px; background: var(--yellow); border-radius: 50%; }
+.hs-greeting { font-size: 8px; color: var(--cream); font-family: 'Syne', sans-serif; font-weight: 800; margin-bottom: 6px; }
+.hs-search { background: var(--border); border-radius: 6px; padding: 4px 6px; font-size: 6px; color: var(--muted); margin-bottom: 8px; }
+.hs-cat-row { display: flex; gap: 4px; margin-bottom: 8px; overflow: hidden; }
+.hs-cat { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 3px 6px; font-size: 5.5px; color: var(--muted); font-family: 'Syne', sans-serif; white-space: nowrap; }
+.hs-cat.sel { background: var(--orange); border-color: var(--orange); color: #fff; }
+.hs-banner { background: linear-gradient(120deg, #ff6b2b, #ff9f1c); border-radius: 8px; padding: 6px 8px; margin-bottom: 8px; }
+.hs-banner-text { font-size: 7px; color: #fff; font-family: 'Syne', sans-serif; font-weight: 700; }
+.hs-banner-sub { font-size: 5.5px; color: rgba(255,255,255,0.7); }
+.rest-card { background: var(--card); border-radius: 8px; margin-bottom: 6px; overflow: hidden; }
+.rest-img { height: 28px; background: linear-gradient(120deg, #2d1a0a, #3d2510); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.rest-info { padding: 4px 5px; }
+.rest-name { font-size: 7px; color: var(--cream); font-family: 'Syne', sans-serif; font-weight: 700; }
+.rest-meta { font-size: 5.5px; color: var(--muted); }
+
+/* RESTAURANT SCREEN */
+.rest-screen { background: #0f0d0b; height: 100%; border-radius: 18px; overflow: hidden; }
+.rest-hero { height: 55px; background: linear-gradient(160deg, #2d1200, #1a0a00); display: flex; align-items: center; justify-content: center; font-size: 24px; position: relative; }
+.rest-back { position: absolute; top: 5px; left: 6px; width: 14px; height: 14px; background: rgba(0,0,0,0.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 8px; }
+.rest-content { padding: 6px; }
+.rest-title { font-size: 9px; font-family: 'Syne', sans-serif; font-weight: 800; color: var(--cream); margin-bottom: 2px; }
+.rest-badges { display: flex; gap: 4px; margin-bottom: 8px; }
+.badge { font-size: 5px; background: rgba(255,107,43,0.15); color: var(--orange); border: 1px solid rgba(255,107,43,0.2); border-radius: 4px; padding: 2px 5px; font-family: 'Syne', sans-serif; font-weight: 600; }
+.menu-item { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--border); }
+.mi-info .mi-name { font-size: 7px; color: var(--cream); font-family: 'Syne', sans-serif; font-weight: 600; }
+.mi-info .mi-price { font-size: 6px; color: var(--orange); }
+.mi-add { background: var(--orange); color: #fff; border: none; border-radius: 4px; width: 16px; height: 16px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 700; }
+
+/* CART SCREEN */
+.cart-screen { background: #0f0d0b; height: 100%; border-radius: 18px; padding: 8px 6px; }
+.cart-title { font-size: 10px; font-family: 'Syne', sans-serif; font-weight: 800; color: var(--cream); margin-bottom: 10px; }
+.cart-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border); }
+.ci-name { font-size: 7px; color: var(--cream); font-family: 'Syne', sans-serif; }
+.ci-qty { display: flex; align-items: center; gap: 5px; }
+.qty-btn { width: 14px; height: 14px; background: var(--border); border-radius: 4px; border: none; color: var(--cream); font-size: 9px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.qty-btn.plus { background: var(--orange); }
+.ci-price { font-size: 7px; color: var(--orange); font-family: 'Syne', sans-serif; font-weight: 600; }
+.cart-total { margin-top: 8px; }
+.total-row { display: flex; justify-content: space-between; font-size: 6.5px; color: var(--muted); margin-bottom: 3px; }
+.total-row.grand { font-size: 8px; color: var(--cream); font-family: 'Syne', sans-serif; font-weight: 700; border-top: 1px solid var(--border); padding-top: 5px; margin-top: 5px; }
+.checkout-btn { background: var(--orange); color: #fff; width: 100%; border: none; border-radius: 8px; padding: 7px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 8px; cursor: pointer; margin-top: 10px; }
+
+/* TRACKING SCREEN */
+.track-screen { background: #0f0d0b; height: 100%; border-radius: 18px; padding: 8px 6px; }
+.track-title { font-size: 10px; font-family: 'Syne', sans-serif; font-weight: 800; color: var(--cream); margin-bottom: 8px; }
+.map-placeholder { height: 70px; background: linear-gradient(160deg, #1a1500, #0f1a0f); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 8px; position: relative; border: 1px solid var(--border); }
+.map-pin { position: absolute; bottom: 12px; right: 20px; font-size: 14px; }
+.map-rider { position: absolute; top: 16px; left: 24px; font-size: 12px; }
+.steps-track { display: flex; flex-direction: column; gap: 6px; }
+.track-step { display: flex; align-items: center; gap: 6px; }
+.ts-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.ts-dot.done { background: var(--orange); }
+.ts-dot.active { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
+.ts-dot.pending { background: var(--border); }
+.ts-label { font-size: 7px; font-family: 'Syne', sans-serif; font-weight: 600; }
+.ts-label.done { color: var(--orange); }
+.ts-label.active { color: var(--yellow); }
+.ts-label.pending { color: var(--muted); }
+.eta-box { margin-top: 8px; background: rgba(255,107,43,0.1); border: 1px solid rgba(255,107,43,0.2); border-radius: 8px; padding: 6px; text-align: center; }
+.eta-time { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; color: var(--orange); }
+.eta-label { font-size: 6px; color: var(--muted); }
+
+/* TWO COLUMN */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media(max-width:540px) { .two-col { grid-template-columns: 1fr; } }
+
+/* DESIGN SYSTEM SECTION */
+.ds-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; }
+.color-chip { height: 56px; border-radius: 8px; display: flex; align-items: flex-end; padding: 6px; }
+.color-label { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: rgba(255,255,255,0.7); }
+
+.type-row { padding: 12px 0; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; gap: 16px; }
+.type-row:last-child { border-bottom: none; }
+.type-spec { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); white-space: nowrap; }
+
+/* FIGMA TIPS */
+.figma-tip {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: rgba(255,107,43,0.06); border: 1px solid rgba(255,107,43,0.15);
+  border-radius: 8px; padding: 14px; margin-bottom: 10px;
+}
+.figma-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+.figma-tip-text { font-size: 13px; color: #b0a49a; }
+.figma-tip-text strong { color: var(--cream); display: block; margin-bottom: 3px; font-family: 'Syne', sans-serif; font-size: 13px; }
+
+/* DO/DONT */
+.do-dont { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media(max-width:480px) { .do-dont { grid-template-columns: 1fr; } }
+.do-box { background: rgba(50,200,100,0.07); border: 1px solid rgba(50,200,100,0.2); border-radius: 8px; padding: 16px; }
+.dont-box { background: rgba(220,60,60,0.07); border: 1px solid rgba(220,60,60,0.2); border-radius: 8px; padding: 16px; }
+.do-label { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; margin-bottom: 10px; }
+.do-label.do { color: #5dcc82; }
+.do-label.dont { color: #e05555; }
+.do-box li, .dont-box li { font-size: 13px; color: #b0a49a; margin-bottom: 6px; padding-left: 14px; position: relative; list-style: none; }
+.do-box li::before { content: '✓'; position: absolute; left: 0; color: #5dcc82; font-weight: 700; }
+.dont-box li::before { content: '✕'; position: absolute; left: 0; color: #e05555; font-weight: 700; }
+
+/* CHECKLIST */
+.checklist { list-style: none; }
+.checklist li {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+  font-size: 13.5px; color: #b0a49a;
+}
+.checklist li:last-child { border-bottom: none; }
+.check-box {
+  width: 18px; height: 18px; border: 2px solid var(--border);
+  border-radius: 4px; flex-shrink: 0; margin-top: 2px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.check-box.checked { background: var(--orange); border-color: var(--orange); }
+.check-box.checked::after { content: '✓'; color: #fff; font-size: 11px; font-weight: 700; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: none; }
+}
+
+.divider {
+  border: none; border-top: 1px solid var(--border);
+  margin: 48px 0 0;
+}
+
+.tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; background: var(--surface); border: 1px solid var(--border); color: var(--muted); padding: 4px 10px; border-radius: 4px; }
+.tag.hot { border-color: rgba(255,107,43,0.4); color: var(--orange-soft); background: rgba(255,107,43,0.08); }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-label">UI/UX Design Guide · Step by Step</div>
+  <h1>Design a <span>Food Delivery</span> App in Figma</h1>
+  <p>A complete beginner-to-finished guide. Every screen. Every decision. Explained simply.</p>
+</div>
+
+<!-- PHASE NAV -->
+<div class="phase-nav">
+  <a class="phase-pill active" href="#phase1">1 · Research</a>
+  <a class="phase-pill" href="#phase2">2 · User Persona</a>
+  <a class="phase-pill" href="#phase3">3 · Wireframes</a>
+  <a class="phase-pill" href="#phase4">4 · Design System</a>
+  <a class="phase-pill" href="#phase5">5 · Hi-Fi Screens</a>
+  <a class="phase-pill" href="#phase6">6 · Prototype</a>
+  <a class="phase-pill" href="#phase7">7 · Case Study</a>
+</div>
+
+<div class="main">
+
+<!-- ══ PHASE 1 · RESEARCH ══ -->
+<div class="phase" id="phase1">
+  <div class="phase-header">
+    <div class="phase-num">Phase 01</div>
+    <div class="phase-title">Research & Discovery</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎯 Goal of This Phase</div>
+    <p>Understand what problems real users face in existing food delivery apps. You can't design solutions without knowing the problems first.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Step-by-Step: What to Do</div>
+    <ul class="step-list">
+      <li><span class="step-num">1</span><div><strong>Use 3 real apps for 2 days:</strong> Swiggy, Zomato, or Uber Eats. Order or browse normally. Write down every moment of confusion or frustration.</div></li>
+      <li><span class="step-num">2</span><div><strong>Competitor Analysis:</strong> Open each app side by side. Compare: home screen layout, search experience, restaurant page, checkout, and order tracking. Note what's good and what's bad.</div></li>
+      <li><span class="step-num">3</span><div><strong>Do 5-Question User Interviews:</strong> Ask 5–8 friends. Questions: What frustrates you most? Have you ever abandoned an order? What do you wish the app did differently?</div></li>
+      <li><span class="step-num">4</span><div><strong>List the Top 3 Problems:</strong> From your research, pick the 3 biggest pain points. Example: "Checkout has too many steps", "Can't filter by dietary preferences easily", "No clear delivery time estimate."</div></li>
+      <li><span class="step-num">5</span><div><strong>Write your Problem Statement:</strong> "Users aged 18–28 struggle to [problem] when [context] because [root cause]."</div></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 Common Pain Points Found in Food Apps</div>
+    <div class="tag-row">
+      <span class="tag hot">Too many checkout steps</span>
+      <span class="tag hot">Hard to filter food types</span>
+      <span class="tag hot">No accurate ETA</span>
+      <span class="tag">Confusing promo codes</span>
+      <span class="tag">Poor search results</span>
+      <span class="tag">No allergy info visible</span>
+      <span class="tag">Reorder takes too long</span>
+    </div>
+    <p style="margin-top:12px; font-size:13px; color:var(--muted);">Pick 1–2 of these to focus your redesign on. Don't try to fix everything.</p>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- ══ PHASE 2 · PERSONA ══ -->
+<div class="phase" id="phase2">
+  <div class="phase-header">
+    <div class="phase-num">Phase 02</div>
+    <div class="phase-title">User Persona</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎯 What is a User Persona?</div>
+    <p>A persona is a fictional character representing your typical user. It keeps you from designing for yourself — you design for <em>them</em>.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">✏️ Create This Persona in Figma (FigJam or Frame)</div>
+    <ul class="step-list">
+      <li><span class="step-num">1</span><div><strong>Name & Photo:</strong> Give them a real-feeling name. Use a face illustration from UI Faces or avataaars.io (free).</div></li>
+      <li><span class="step-num">2</span><div><strong>Bio:</strong> Age 22. College student. Orders food 3x a week. Uses Swiggy mostly. Lives in a hostel.</div></li>
+      <li><span class="step-num">3</span><div><strong>Goals:</strong> Get food fast. Spend under ₹150. Find something healthy sometimes.</div></li>
+      <li><span class="step-num">4</span><div><strong>Frustrations:</strong> Too many steps to checkout. App crashes during payment. Can't find vegetarian options quickly.</div></li>
+      <li><span class="step-num">5</span><div><strong>Tech Habits:</strong> Uses phone 6h/day. Comfortable with UPI. Shops online frequently.</div></li>
+      <li><span class="step-num">6</span><div><strong>Quote:</strong> Write 1 sentence they might say. "I just want to order food in under 2 minutes."</div></li>
+    </ul>
+  </div>
+
+  <div class="figma-tip">
+    <div class="figma-icon">🖥️</div>
+    <div class="figma-tip-text">
+      <strong>Figma Tip: Use FigJam for Persona</strong>
+      Open FigJam → Use sticky notes for each section. Use coloured sections (pink = goals, red = frustrations, blue = habits). Screenshots look great in case studies.
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- ══ PHASE 3 · WIREFRAMES ══ -->
+<div class="phase" id="phase3">
+  <div class="phase-header">
+    <div class="phase-num">Phase 03</div>
+    <div class="phase-title">Wireframing (Lo-Fi)</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎯 What is a Wireframe?</div>
+    <p>Grey-box sketches of your screens. No colours, no images. Just layout and structure. Think of it as the blueprint before the building.</p>
+    <p style="margin-top:8px;">Always wireframe BEFORE designing. It saves hours of wasted work.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📱 5 Screens You Must Design</div>
+    <ul class="step-list">
+      <li><span class="step-num">1</span><div><strong>Splash Screen</strong> — Logo + App name. Shown for 2 seconds when app opens.</div></li>
+      <li><span class="step-num">2</span><div><strong>Home Screen</strong> — Location, search bar, categories (Burger, Pizza, etc.), promotions banner, restaurant list.</div></li>
+      <li><span class="step-num">3</span><div><strong>Restaurant Page</strong> — Restaurant hero image, name + ratings + delivery time, menu items with photos and "Add" buttons.</div></li>
+      <li><span class="step-num">4</span><div><strong>Cart / Checkout</strong> — Item list, quantities, subtotal, delivery fee, total, "Place Order" button.</div></li>
+      <li><span class="step-num">5</span><div><strong>Order Tracking</strong> — Map with rider location, progress steps (Confirmed → Preparing → On the way → Delivered), ETA.</div></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🖥️ How to Wireframe in Figma</div>
+    <ul class="step-list">
+      <li><span class="step-num">1</span><div>New Figma file → Press <strong>F</strong> to open Frame tool → Choose <strong>iPhone 14</strong> (390 × 844px)</div></li>
+      <li><span class="step-num">2</span><div>Use only <strong>rectangles</strong> (R), <strong>text</strong> (T), and <strong>lines</strong> (L). Fill everything with grey (#CCCCCC for images, #EEEEEE for cards).</div></li>
+      <li><span class="step-num">3</span><div>Label each element with a text box. E.g. "Search Bar", "Restaurant Card", "Category Icon"</div></li>
+      <li><span class="step-num">4</span><div>Create all 5 frames side by side on the same canvas.</div></li>
+      <li><span class="step-num">5</span><div>Show wireframes to 2 people. Ask: "What do you think you can do on each screen?" Note confusion.</div></li>
+    </ul>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- ══ PHASE 4 · DESIGN SYSTEM ══ -->
+<div class="phase" id="phase4">
+  <div class="phase-header">
+    <div class="phase-num">Phase 04</div>
+    <div class="phase-title">Design System (Before You Design)</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎯 Why Build This First?</div>
+    <p>A design system is your set of rules — colours, fonts, buttons, icons — so every screen looks consistent. Professional designers always build this before touching screens.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎨 Colour Palette to Use</div>
+    <div class="ds-grid">
+      <div class="color-chip" style="background:#FF6B2B;"><span class="color-label">#FF6B2B<br>Primary</span></div>
+      <div class="color-chip" style="background:#FF9F1C;"><span class="color-label">#FF9F1C<br>Accent</span></div>
+      <div class="color-chip" style="background:#1A1A1A;"><span class="color-label">#1A1A1A<br>Dark BG</span></div>
+      <div class="color-chip" style="background:#FFFFFF; border:1px solid #eee;"><span class="color-label" style="color:#333;">#FFFFFF<br>Surface</span></div>
+      <div class="color-chip" style="background:#F5F5F0; border:1px solid #eee;"><span class="color-label" style="color:#333;">#F5F5F0<br>BG Light</span></div>
+      <div class="color-chip" style="background:#22C55E;"><span class="color-label">#22C55E<br>Success</span></div>
+    </div>
+    <p style="margin-top:12px; font-size:12px; color:var(--muted);">Use orange as your primary CTA colour. It triggers appetite and urgency — perfect for food apps.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔤 Typography Rules</div>
+    <div class="type-row">
+      <div class="type-spec">H1 · 28px Bold</div>
+      <div style="font-size:20px; font-weight:700; color:var(--cream);">Good Food. Fast.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-spec">H2 · 20px SemiBold</div>
+      <div style="font-size:16px; font-weight:600; color:var(--cream);">Popular Near You</div>
+    </div>
+    <div class="type-row">
+      <div class="type-spec">Body · 14px Regular</div>
+      <div style="font-size:13px; color:#b0a49a;">Margherita Pizza · ₹199 · 25 min</div>
+    </div>
+    <div class="type-row">
+      <div class="type-spec">Caption · 12px</div>
+      <div style="font-size:11px; color:var(--muted);">⭐ 4.3 · 200+ ratings · 2.1km away</div>
+    </div>
+    <p style="margin-top:10px; font-size:12px; color:var(--muted);">Recommended font: <strong style="color:var(--orange-soft);">Poppins</strong> (free on Google Fonts). Download and install before starting Figma.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🧩 Components to Build in Figma</div>
+    <ul class="step-list">
+      <li><span class="step-num">→</span><div><strong>Button (Primary):</strong> Orange fill, white text, 48px height, 12px border radius</div></li>
+      <li><span class="step-num">→</span><div><strong>Button (Secondary):</strong> White fill, orange border and text</div></li>
+      <li><span class="step-num">→</span><div><strong>Restaurant Card:</strong> Image (160px height) + Name + Rating + Delivery time + Price range</div></li>
+      <li><span class="step-num">→</span><div><strong>Menu Item Row:</strong> Name + Description + Price + Add button</div></li>
+      <li><span class="step-num">→</span><div><strong>Search Bar:</strong> Icon + placeholder text, rounded, grey fill</div></li>
+      <li><span class="step-num">→</span><div><strong>Bottom Navigation Bar:</strong> 4 icons — Home, Search, Orders, Profile</div></li>
+      <li><span class="step-num">→</span><div><strong>Rating Badge:</strong> Star icon + number, small, yellow/green</div></li>
+    </ul>
+  </div>
+
+  <div class="figma-tip">
+    <div class="figma-icon">⌨️</div>
+    <div class="figma-tip-text">
+      <strong>Figma Tip: Create Components</strong>
+      Design one button → Right click → "Create Component" (Cmd/Ctrl+Alt+K). Now every copy of that button is linked. Change the master, all copies update. This is a core professional skill.
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- ══ PHASE 5 · HI-FI SCREENS ══ -->
+<div class="phase" id="phase5">
+  <div class="phase-header">
+    <div class="phase-num">Phase 05</div>
+    <div class="phase-title">Hi-Fi Screen Design</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎯 What You're Building — Preview</div>
+    <p style="margin-bottom:16px; font-size:13px; color:var(--muted);">Click any screen to see it better. Here's what your 5 final screens should look like conceptually:</p>
+
+    <div class="mockup-row">
+      <!-- SPLASH -->
+      <div class="phone-mockup">
+        <div class="phone-notch"></div>
+        <div class="screen">
+          <div class="splash-screen">
+            <div class="splash-logo">🍔</div>
+            <div class="splash-name">BITEFLOW</div>
+            <div class="splash-tagline">Delivered in Minutes</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HOME -->
+      <div class="phone-mockup">
+        <div class="phone-notch"></div>
+        <div class="screen">
+          <div class="screen-label">Home</div>
+          <div class="home-screen">
+            <div class="hs-header"><span class="hs-loc">📍 Koramangala</span><div class="hs-avatar"></div></div>
+            <div class="hs-greeting">What are you<br>craving? 🔥</div>
+            <div class="hs-search">🔍  Search restaurants...</div>
+            <div class="hs-cat-row">
+              <div class="hs-cat sel">🍔 Burgers</div>
+              <div class="hs-cat">🍕 Pizza</div>
+              <div class="hs-cat">🍜 Noodles</div>
+            </div>
+            <div class="hs-banner">
+              <div class="hs-banner-text">50% OFF First Order</div>
+              <div class="hs-banner-sub">Use code FIRST50 at checkout</div>
+            </div>
+            <div class="rest-card">
+              <div class="rest-img">🍔</div>
+              <div class="rest-info">
+                <div class="rest-name">Burger Republic</div>
+                <div class="rest-meta">⭐ 4.5 · 25 min · ₹150 for one</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESTAURANT -->
+      <div class="phone-mockup">
+        <div class="phone-notch"></div>
+        <div class="screen">
+          <div class="screen-label">Restaurant</div>
+          <div class="rest-screen">
+            <div class="rest-hero">🍕<div class="rest-back">←</div></div>
+            <div class="rest-content">
+              <div class="rest-title">Pizza Palace</div>
+              <div class="rest-badges">
+                <span class="badge">⭐ 4.6</span>
+                <span class="badge">🕐 20 min</span>
+                <span class="badge">🆓 Free Del.</span>
+              </div>
+              <div class="menu-item">
+                <div class="mi-info"><div class="mi-name">Margherita</div><div class="mi-price">₹199</div></div>
+                <button class="mi-add">+</button>
+              </div>
+              <div class="menu-item">
+                <div class="mi-info"><div class="mi-name">Pepperoni</div><div class="mi-price">₹249</div></div>
+                <button class="mi-add">+</button>
+              </div>
+              <div class="menu-item">
+                <div class="mi-info"><div class="mi-name">BBQ Chicken</div><div class="mi-price">₹279</div></div>
+                <button class="mi-add">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CART -->
+      <div class="phone-mockup">
+        <div class="phone-notch"></div>
+        <div class="screen">
+          <div class="screen-label">Cart</div>
+          <div class="cart-screen">
+            <div class="cart-title">Your Cart 🛒</div>
+            <div class="cart-item">
+              <div class="ci-name">Margherita Pizza</div>
+              <div class="ci-qty">
+                <button class="qty-btn">−</button>
+                <span style="font-size:8px;color:var(--cream);">1</span>
+                <button class="qty-btn plus">+</button>
+              </div>
+              <div class="ci-price">₹199</div>
+            </div>
+            <div class="cart-item">
+              <div class="ci-name">Pepperoni Pizza</div>
+              <div class="ci-qty">
+                <button class="qty-btn">−</button>
+                <span style="font-size:8px;color:var(--cream);">1</span>
+                <button class="qty-btn plus">+</button>
+              </div>
+              <div class="ci-price">₹249</div>
+            </div>
+            <div class="cart-total">
+              <div class="total-row"><span>Subtotal</span><span>₹448</span></div>
+              <div class="total-row"><span>Delivery</span><span style="color:#5dcc82;">FREE</span></div>
+              <div class="total-row"><span>Tax</span><span>₹36</span></div>
+              <div class="total-row grand"><span>Total</span><span style="color:var(--orange);">₹484</span></div>
+            </div>
+            <button class="checkout-btn">Place Order →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRACKING -->
+      <div class="phone-mockup">
+        <div class="phone-notch"></div>
+        <div class="screen">
+          <div class="screen-label">Tracking</div>
+          <div class="track-screen">
+            <div class="track-title">Order on the way! 🛵</div>
+            <div class="map-placeholder">
+              🗺️
+              <div class="map-rider">🛵</div>
+              <div class="map-pin">📍</div>
+            </div>
+            <div class="steps-track">
+              <div class="track-step"><div class="ts-dot done"></div><span class="ts-label done">✓ Order Confirmed</span></div>
+              <div class="track-step"><div class="ts-dot done"></div><span class="ts-label done">✓ Preparing Food</span></div>
+              <div class="track-step"><div class="ts-dot active"></div><span class="ts-label active">● Out for Delivery</span></div>
+              <div class="track-step"><div class="ts-dot pending"></div><span class="ts-label pending">○ Delivered</span></div>
+            </div>
+            <div class="eta-box">
+              <div class="eta-time">12 min</div>
+              <div class="eta-label">Estimated Arrival</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🖥️ How to Build Each Screen in Figma</div>
+    <ul class="step-list">
+      <li><span class="step-num">1</span><div><strong>Start with your wireframe frame.</strong> Keep it underneath as reference. Duplicate it and start adding real colours on top.</div></li>
+      <li><span class="step-num">2</span><div><strong>Home Screen first.</strong> Add a real food image for the banner (use Unsplash.com — free). Replace grey boxes with your components.</div></li>
+      <li><span class="step-num">3</span><div><strong>Use Auto Layout everywhere.</strong> Select multiple items → Right click → Add Auto Layout (Shift+A). This keeps spacing consistent automatically.</div></li>
+      <li><span class="step-num">4</span><div><strong>Import free icons</strong> from the Figma Community: search "Heroicons" or "Phosphor Icons". Drag them in directly.</div></li>
+      <li><span class="step-num">5</span><div><strong>Add food images</strong> from Unsplash Plugin in Figma. Install it → select a rectangle → fill with photo instantly.</div></li>
+      <li><span class="step-num">6</span><div><strong>Add shadows.</strong> Select a card → Right panel → "+" under Drop shadow → Offset Y: 4, Blur: 12, Opacity: 10%.</div></li>
+      <li><span class="step-num">7</span><div><strong>Status bar & home indicator.</strong> Download a free iOS/Android status bar from Figma Community and paste at the top of each screen.</div></li>
+    </ul>
+  </div>
+
+  <div class="two-col">
+    <div class="do-box">
+      <div class="do-label do">✓ DO</div>
+      <ul>
+        <li>Use consistent 16px padding on all sides</li>
+        <li>Make touch targets at least 44×44px</li>
+        <li>Use real food images, not placeholders</li>
+        <li>Show ratings, delivery time, and price on every restaurant card</li>
+        <li>Add a bottom nav bar on all screens</li>
+      </ul>
+    </div>
+    <div class="dont-box">
+      <div class="do-label dont">✕ DON'T</div>
+      <ul>
+        <li>Mix different font sizes randomly</li>
+        <li>Use more than 2–3 colours</li>
+        <li>Make buttons too small to tap</li>
+        <li>Forget the back button on inner screens</li>
+        <li>Use low quality or unrelated images</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- ══ PHASE 6 · PROTOTYPE ══ -->
+<div class="phase" id="phase6">
+  <div class="phase-header">
+    <div class="phase-num">Phase 06</div>
+    <div class="phase-title">Prototyping & Testing</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎯 What is a Prototype?</div>
+    <p>Linking your screens so they feel like a real app you can tap through. No code needed — Figma does this automatically.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">How to Prototype in Figma</div>
+    <ul class="step-list">
+      <li><span class="step-num">1</span><div>Click the <strong>Prototype</strong> tab in the right panel (next to Design and Inspect).</div></li>
+      <li><span class="step-num">2</span><div>Click a button (e.g. a restaurant card on the Home screen). Drag the blue arrow to your Restaurant screen.</div></li>
+      <li><span class="step-num">3</span><div>Set the interaction: <strong>On Click → Navigate to → [Restaurant Screen]</strong>. Animation: Smart Animate, 300ms ease.</div></li>
+      <li><span class="step-num">4</span><div>Connect all 5 screens in order: Splash → Home → Restaurant → Cart → Tracking.</div></li>
+      <li><span class="step-num">5</span><div>Press <strong>▶ Play</strong> button (top right). Your app is now clickable!</div></li>
+      <li><span class="step-num">6</span><div>Share the prototype link with 3 people. Watch them use it silently. Note where they get confused.</div></li>
+    </ul>
+  </div>
+
+  <div class="figma-tip">
+    <div class="figma-icon">🧪</div>
+    <div class="figma-tip-text">
+      <strong>Usability Testing Script (What to Say)</strong>
+      "I'm going to share a food app prototype with you. Please think out loud as you try to order a Margherita Pizza. I'm testing the app, not you — there are no wrong answers." Then stay silent and observe.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 What to Document After Testing</div>
+    <ul class="step-list">
+      <li><span class="step-num">→</span><div><strong>Where did users hesitate or get confused?</strong></div></li>
+      <li><span class="step-num">→</span><div><strong>Did they find the checkout button easily?</strong></div></li>
+      <li><span class="step-num">→</span><div><strong>What did they expect to happen that didn't?</strong></div></li>
+      <li><span class="step-num">→</span><div><strong>What did they say they liked?</strong></div></li>
+    </ul>
+    <p style="margin-top:10px; font-size:13px; color:var(--muted);">Make 1–2 improvements based on feedback. Mention this iteration in your case study — it proves a real UX process.</p>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- ══ PHASE 7 · CASE STUDY ══ -->
+<div class="phase" id="phase7">
+  <div class="phase-header">
+    <div class="phase-num">Phase 07</div>
+    <div class="phase-title">Write the Case Study</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎯 Why It Matters</div>
+    <p>Your case study is what gets you hired. Recruiters spend 30 seconds on a resume and 5 minutes on a case study. It should tell a story: Problem → Process → Solution.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📝 Case Study Structure (for Behance or Notion)</div>
+    <ul class="step-list">
+      <li><span class="step-num">1</span><div><strong>Cover Image:</strong> Best-looking screen of your app, full width. First impression matters.</div></li>
+      <li><span class="step-num">2</span><div><strong>Project Overview:</strong> 2–3 sentences. What is the app, what problem does it solve, who is it for?</div></li>
+      <li><span class="step-num">3</span><div><strong>The Problem:</strong> Quote a real user frustration. Show competitor screenshots with red annotations.</div></li>
+      <li><span class="step-num">4</span><div><strong>Research:</strong> Share your interview findings. Use a simple chart or quote cards.</div></li>
+      <li><span class="step-num">5</span><div><strong>User Persona:</strong> Screenshot of your persona from FigJam.</div></li>
+      <li><span class="step-num">6</span><div><strong>Wireframes:</strong> Show your lo-fi wireframes. Explain key layout decisions.</div></li>
+      <li><span class="step-num">7</span><div><strong>Design System:</strong> Show your colour palette, type scale, and key components.</div></li>
+      <li><span class="step-num">8</span><div><strong>Final Screens:</strong> Full-size, beautiful screenshots. Use a phone mockup frame (free on Mockuphone.com).</div></li>
+      <li><span class="step-num">9</span><div><strong>Testing & Iterations:</strong> Before/after showing what you changed after user testing.</div></li>
+      <li><span class="step-num">10</span><div><strong>Learnings:</strong> 2–3 things you learned. Shows humility and growth mindset.</div></li>
+    </ul>
+  </div>
+
+  <div class="figma-tip">
+    <div class="figma-icon">🔗</div>
+    <div class="figma-tip-text">
+      <strong>Always Include a Prototype Link</strong>
+      At the top of your case study, add: "View Prototype →" linking to your Figma prototype. Recruiters want to click through the app. Make it the most prominent element.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">✅ Final Project Checklist</div>
+    <ul class="checklist" id="checklist">
+      <li><div class="check-box" onclick="toggleCheck(this)"></div>5 hi-fi screens completed in Figma</li>
+      <li><div class="check-box" onclick="toggleCheck(this)"></div>Clickable prototype linking all screens</li>
+      <li><div class="check-box" onclick="toggleCheck(this)"></div>Design system (colours + fonts + components)</li>
+      <li><div class="check-box" onclick="toggleCheck(this)"></div>User persona created in FigJam</li>
+      <li><div class="check-box" onclick="toggleCheck(this)"></div>Tested with at least 3 real users</li>
+      <li><div class="check-box" onclick="toggleCheck(this)"></div>Before/after improvement documented</li>
+      <li><div class="check-box" onclick="toggleCheck(this)"></div>Case study published on Behance or Notion</li>
+      <li><div class="check-box" onclick="toggleCheck(this)"></div>Prototype link in case study header</li>
+      <li><div class="check-box" onclick="toggleCheck(this)"></div>App mockup screenshots added to resume</li>
+    </ul>
+  </div>
+
+</div>
+
+</div><!-- end main -->
+
+<script>
+  function toggleCheck(el) {
+    el.classList.toggle('checked');
+  }
+  // Highlight active nav pill on scroll
+  const pills = document.querySelectorAll('.phase-pill');
+  const phases = document.querySelectorAll('.phase');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    phases.forEach(p => {
+      if (window.scrollY >= p.offsetTop - 120) current = p.id;
+    });
+    pills.forEach(p => {
+      p.classList.toggle('active', p.getAttribute('href') === '#' + current);
+    });
+  });
+</script>
+</body>
+</html>
